@@ -1,3 +1,5 @@
 # Tracking Server
-For AutoFon Device
-Tested to AutoFon SE-Mayak v6.2d
+For AutoFon Devices<br>
+Tested on AutoFon SE-Mayak v6.2d
+
+Author [Oxmix](http://oxmix.net/)
