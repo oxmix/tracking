@@ -60,7 +60,9 @@ class Tracking:
             try:
                 buf = conn.recv(1024)
             except socket.timeout:
-                self.disconnect(connect['imei'])
+                if connect['imei'] != 'without':
+                    self.storage.publish(self.conf['redis_channel'], json.dumps({'request': 'timeout',
+                                                                                 'imei': connect['imei']}))
                 self.log('Connect: ' + str(self.connection_seq) + ' - break connect of timeout')
                 break
 
@@ -137,7 +139,9 @@ class Tracking:
                          + ' - query bad')
 
         conn.close()
-        self.disconnect(connect['imei'])
+        if connect['imei'] != 'without':
+            self.storage.publish(self.conf['redis_channel'], json.dumps({'request': 'disconnected',
+                                                                         'imei': connect['imei']}))
         del self.connections[self.connection_seq]
         self.log('Connect: ' + str(self.connection_seq) + ' - closed')
 
@@ -151,11 +155,6 @@ class Tracking:
         else:
             print(message)
         sys.stdout.flush()
-
-    def disconnect(self, imei):
-        if imei != 'without':
-            self.storage.publish(self.conf['redis_channel'], json.dumps({'request': 'disconnected',
-                                                                         'imei': imei}))
 
     @staticmethod
     def memory_usage():
